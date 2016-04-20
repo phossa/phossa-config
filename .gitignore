@@ -6,5 +6,9 @@
 /.project
 /.buildpath
 
+# config
+.env*
+!.env.example
+
 # composer stuff
 composer.lock
