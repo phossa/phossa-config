@@ -1,0 +1,30 @@
+{
+    "name": "phossa/phossa-config",
+    "license": "MIT",
+    "type": "library",
+    "description": "A PHP config libraray",
+    "keywords": ["phossa", "config", "configure", "configuration"],
+    "homepage": "https://github.com/phossa/phossa-config",
+    "authors": [
+        {
+            "name": "Hong Zhang",
+            "homepage": "https://github.com/phossa"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "Phossa\\Config\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-0": { "Phossa\\Config\\": "tests/src/" }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "phossa/phossa-shared": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*"
+    },
+    "archive": {
+        "exclude": ["!vendor", "tests", "*phpunit.xml",  "composer.lock"]
+    }
+}
