@@ -20,15 +20,17 @@ It requires PHP 5.4 and supports PHP 7.0+, HHVM. It is compliant with
 Features
 ---
 
-- Support PHP and XML configuration files.
-
-- Able to trace specific configuration entry from which file.
+- Support PHP and ENV type configuration files.
 
 - Configuration cache for speed.
 
 - Configuration tagging support for different running environment.
 
 - Parameter reference '${SYSTEM_TMPDIR}' support. Dereferencing at run time.
+
+  - '.' notation or '_' notation configurable
+
+  - DATABASE_${ENV}_HOST: base one ${ENV} either 'DEV' or 'PROD'
 
 - Configuration provider support.
 
@@ -41,6 +43,12 @@ Features
   - referencing/nesting
 
   - shell support
+
+- Different level configs
+
+  - Environment: 'DEV', 'PROD'
+
+  - Host base: 'SERVER1', 'SERVER2'
 
 Getting started
 ---
