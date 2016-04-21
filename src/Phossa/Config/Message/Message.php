@@ -32,9 +32,14 @@ class Message extends MessageAbstract
      */
 
     /**
-     * DB driver not found
+     * File "%s" not found or not readable
      */
-    const DB_DRIVER_NOTFOUND        = 1603251436;
+    const CONFIG_FILE_NOTFOUND      = 1604211340;
+
+    /**
+     * Unknown environment "%s"
+     */
+    const CONFIG_ENV_UNKNOWN        = 1604211341;
 
     /**#@-*/
 
@@ -42,6 +47,7 @@ class Message extends MessageAbstract
      * {@inheritdoc}
      */
     protected static $messages = [
-        self::DB_DRIVER_NOTFOUND    => 'DB driver not found',
+        self::CONFIG_FILE_NOTFOUND  => 'File "%s" not found or not readable',
+        self::CONFIG_ENV_UNKNOWN    => 'Unknown environment "%s"',
     ];
 }

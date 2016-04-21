@@ -1,0 +1,17 @@
+# this is comment
+test1=bing
+
+# recursinv
+bingo=wow
+
+# variable substitute
+test2=${test1}wow # another comment
+
+# space in value is allowed
+test3 = space1 space2
+
+# recursive
+test4 = ${${test1}o}wow
+
+# use super globals
+test5=${_SERVER.test}wow
