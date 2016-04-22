@@ -47,11 +47,11 @@ class ParameterReference extends ReferenceAbstract
      */
     public function getReferenceValue(/*# string */ $name)
     {
-        // super globals start with '_'
+        // get super globals start with '_'
         if ('_' === $name[0]) {
             return $this->superGlobalValue($name);
 
-        // normal reference
+        // get normal reference
         } else {
             // $this->data has to be set here
             if (is_null($this->data)) {
@@ -91,7 +91,7 @@ class ParameterReference extends ReferenceAbstract
     }
 
     /**
-     * Get the reference value
+     * Get reference value from $this->data pool
      *
      * @param  string $name
      * @return string|array

@@ -40,6 +40,7 @@ class PhpLoaderTest extends \PHPUnit_Framework_TestCase
      * @covers Phossa\Config\Loader\PhpLoader::load()
      * @expectedException Phossa\Config\Exception\LogicException
      * @expectedExceptionMessageRegExp "Load config file .*error"
+     * @expectedExceptionCode Phossa\Config\Message\Message::CONFIG_LOAD_ERROR
      */
     public function testLoad2()
     {
@@ -54,6 +55,7 @@ class PhpLoaderTest extends \PHPUnit_Framework_TestCase
      * @covers Phossa\Config\Loader\PhpLoader::load()
      * @expectedException Phossa\Config\Exception\LogicException
      * @expectedExceptionMessageRegExp "not array"
+     * @expectedExceptionCode Phossa\Config\Message\Message::CONFIG_FORMAT_ERROR
      */
     public function testLoad3()
     {

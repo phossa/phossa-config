@@ -27,10 +27,25 @@ use Phossa\Config\Exception\LogicException;
 interface ReferenceInterface
 {
     /**
-     * Verify $str has reference in it or not
+     * Set full reference data
+     *
+     * @param  array $dataArray
+     * @param  bool $deReference dereference the reference pool
+     * @return $this
+     * @access public
+     */
+    public function setReferencePool(
+        array $dataArray,
+        /*# bool */ $deReference = false
+    );
+
+    /**
+     * Verify $str has reference¡¡('${name}xxXX') in it.
+     *
+     * Returns ['${name}' => 'name'] if found, or false if not found
      *
      * @param  string $str
-     * @return false|array ['${name}' => 'name']
+     * @return false|array
      * @access public
      */
     public function hasReference(/*# string */ $str);
@@ -38,11 +53,13 @@ interface ReferenceInterface
     /**
      * Replace all references in the string like '${system.dir}/temp'
      *
-     * IF result is array, DO NOT recursively derefence it
+     * - recursively dereference a result string
+     *
+     * - if result is array|object do NOT dereference recursively.
      *
      * @param  string $str
      * @return string|object|array
-     * @throws LogicException if malformed reference found or unknown ref
+     * @throws LogicException if malformed ref found or unknown ref
      * @access public
      */
     public function deReference(/*# string */ $str);
@@ -51,7 +68,6 @@ interface ReferenceInterface
      * Replace all references in the array
      *
      * @param  array &$dataArray
-     * @return void
      * @throws LogicException if malformed reference found or unknown ref
      * @access public
      */

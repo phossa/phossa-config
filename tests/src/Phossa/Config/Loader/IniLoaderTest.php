@@ -40,6 +40,7 @@ class IniLoaderTest extends \PHPUnit_Framework_TestCase
      * @covers Phossa\Config\Loader\IniLoader::load()
      * @expectedException Phossa\Config\Exception\LogicException
      * @expectedExceptionMessageRegExp "Load config file .*error"
+     * @expectedExceptionCode Phossa\Config\Message\Message::CONFIG_LOAD_ERROR
      */
     public function testLoad2()
     {
@@ -53,6 +54,7 @@ class IniLoaderTest extends \PHPUnit_Framework_TestCase
      *
      * @covers Phossa\Config\Loader\IniLoader::load()
      * @expectedException Phossa\Config\Exception\LogicException
+     * @expectedExceptionCode Phossa\Config\Message\Message::CONFIG_FORMAT_ERROR
      */
     public function testLoad3()
     {

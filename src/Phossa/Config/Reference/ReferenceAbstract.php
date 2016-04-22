@@ -67,15 +67,33 @@ abstract class ReferenceAbstract implements ReferenceInterface
         /*# string */ $leftDelimiter  = null,
         /*# string */ $rightDelimiter = null,
         /*# string */ $namePattern = null
-        ) {
-            if (!is_null($leftDelimiter)) {
-                $this->pattern = sprintf(
-                    '~(%s(%s)%s)~',
-                    $leftDelimiter,
-                    $namePattern,
-                    $rightDelimiter
-                    );
-            }
+    ) {
+        if (!is_null($leftDelimiter)) {
+            $this->pattern = sprintf(
+                '~(%s(%s)%s)~',
+                $leftDelimiter,
+                $namePattern,
+                $rightDelimiter
+            );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setReferencePool(
+        array $dataArray,
+        /*# bool */ $deReference = false
+    ) {
+        // set the reference pool
+        $this->data = $dataArray;
+
+        // dereference the pool if required
+        if ($deReference) {
+            $this->deReferenceArray($this->data);
+        }
+
+        return $this;
     }
 
     /**
@@ -116,15 +134,15 @@ abstract class ReferenceAbstract implements ReferenceInterface
                 // get referenced value
                 $value = $this->getReferenceValue($name);
 
-                // full match
-                if ($str === $ref) {
-                    return $value;
-
-                // partial string match found
-                } elseif (is_string($value)) {
+                // value is string
+                if (is_string($value)) {
                     $str = str_replace($ref, $value, $str);
 
-                // malformed
+                // value is array or object
+                } elseif ($str === $ref) {
+                    return $value;
+
+                // malformed, array|object + string found
                 } else {
                     throw new LogicException(
                         Message::get(Message::CONFIG_REF_MALFORM, $str),
@@ -141,7 +159,7 @@ abstract class ReferenceAbstract implements ReferenceInterface
      */
     public function deReferenceArray(array &$dataArray)
     {
-        // for getReferenceValue
+        // init reference pool if not yet
         if (is_null($this->data)) {
             $this->data = &$dataArray;
         }
@@ -152,17 +170,17 @@ abstract class ReferenceAbstract implements ReferenceInterface
                 if (is_array($data)) {
                     $this->dereferenceArray($data);
 
-                // normal string reference or object
+                // $data is string
                 } elseif (is_string($data)) {
                     $key = $data;
                     if (isset($this->detect[$key])) {
-                        $data = &$this->detect[$key];
+                        $data = $this->detect[$key];
                     } else {
                         $data = $this->deReference($data);
                         if (is_array($data)) {
                             $this->dereferenceArray($data);
                         }
-                        $this->detect[$key] = &$data;
+                        $this->detect[$key] = $data;
                     }
                 }
             }

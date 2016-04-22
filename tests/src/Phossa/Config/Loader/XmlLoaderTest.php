@@ -40,6 +40,7 @@ class XmlLoaderTest extends \PHPUnit_Framework_TestCase
      * @covers Phossa\Config\Loader\XmlLoader::load()
      * @expectedException Phossa\Config\Exception\LogicException
      * @expectedExceptionMessageRegExp "Load config file .*error"
+     * @expectedExceptionCode Phossa\Config\Message\Message::CONFIG_LOAD_ERROR
      */
     public function testLoad2()
     {
