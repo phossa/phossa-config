@@ -20,6 +20,16 @@ class ParameterReferenceTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->object = new ParameterReference();
+
+        // data to use
+        $this->data = [
+            'test1' => '${wow1}',
+            'test2' => [
+                'test3' => 'wow3'
+            ],
+            'wow1'  => '${test2.test3}',
+            'wow3'  => 'xxx'
+        ];
     }
 
     /**
@@ -88,22 +98,15 @@ class ParameterReferenceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($str1, $this->object->deReference($str1));
 
         // set data
-        $data = [
-            'test1' => 'wow1',
-            'test2' => [
-                'test3' => 'wow3'
-            ],
-            'wow1'  => 'xxx'
-        ];
-        $this->object->setReferencePool($data);
+        $this->object->setReferencePool($this->data);
 
         // has ref
         $str2 = '${test1}dd';
-        $this->assertEquals('wow1dd', $this->object->deReference($str2));
+        $this->assertEquals('wow3dd', $this->object->deReference($str2));
 
         // multiple refs, leveled refs
         $str3 = '${test1}dd${test2.test3}';
-        $this->assertEquals('wow1ddwow3', $this->object->deReference($str3));
+        $this->assertEquals('wow3ddwow3', $this->object->deReference($str3));
 
         // recursive refs
         $str4 = '${${test1}}dd';
@@ -140,14 +143,7 @@ class ParameterReferenceTest extends \PHPUnit_Framework_TestCase
     public function testDeReference3()
     {
         // set data
-        $data = [
-            'test1' => 'wow1',
-            'test2' => [
-                'test3' => 'wow3'
-            ],
-            'wow1'  => 'xxx'
-        ];
-        $this->object->setReferencePool($data);
+        $this->object->setReferencePool($this->data);
 
         // dereferenced array into a string
         $str1 = '${test2}xx';
@@ -179,27 +175,52 @@ class ParameterReferenceTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Phossa\Config\Reference\ParameterReference::deReferenceArray()
      */
-    public function testDeReferenceArray()
+    public function testDeReferenceArray1()
     {
         // set data
-        $data = [
-            'test1' => '${wow1}',
-            'test2' => [
-                'test3' => 'wow3'
-            ],
-            'wow1'  => 'xxx'
-        ];
-        $this->object->deReferenceArray($data);
+        $this->object->deReferenceArray($this->data);
 
-        // 'test1' is 'xxx
-        $this->assertEquals('xxx', $this->object->getReferenceValue('test1'));
+        $this->assertEquals('wow3', $this->data['test1']);
     }
 
     /**
-     * Tests ParameterReference->getReferenceValue()
+     * @covers Phossa\Config\Reference\ParameterReference::getReferenceValue()
      */
-    public function testGetReferenceValue()
+    public function testGetReferenceValue1()
     {
+        $this->object->setReferencePool($this->data, true);
+
+        $this->assertEquals('xxx',  $this->object->getReferenceValue('wow3'));
+        $this->assertEquals('wow3', $this->object->getReferenceValue('wow1'));
+        $this->assertEquals('wow3', $this->object->getReferenceValue('test1'));
+    }
+
+
+    /**
+     * test super globals
+     *
+     * @covers Phossa\Config\Reference\ParameterReference::getReferenceValue()
+     */
+    public function testGetReferenceValue2()
+    {
+        $_SERVER['TEST'] = 'bingo';
+
+        $this->assertEquals('bingo',  $this->object->getReferenceValue('_SERVER.TEST'));
+
+        unset($_SERVER['TEST']);
+    }
+
+    /**
+     * get super globals failed
+     *
+     * @covers Phossa\Config\Reference\ParameterReference::getReferenceValue()
+     * @expectedException Phossa\Config\Exception\LogicException
+     * @expectedExceptionMessageRegExp "name .* unknown"
+     * @expectedExceptionCode Phossa\Config\Message\Message::CONFIG_REF_UNKNOWN
+     */
+    public function testGetReferenceValue3()
+    {
+        $this->assertEquals('bingo',  $this->object->getReferenceValue('_SERVER.TEST'));
     }
 }
 

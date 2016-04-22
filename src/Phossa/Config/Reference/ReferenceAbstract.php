@@ -40,7 +40,7 @@ abstract class ReferenceAbstract implements ReferenceInterface
     protected $pattern;
 
     /**
-     * full data
+     * full data pool
      *
      * @var    array
      * @access protected
@@ -58,23 +58,14 @@ abstract class ReferenceAbstract implements ReferenceInterface
     /**
      * Create a new pattern to use
      *
-     * @param  string $leftDelimiter
-     * @param  string $rightDelimiter
-     * @param  string $namePattern
+     * @param  string $referencePattern
      * @access public
      */
     public function __construct(
-        /*# string */ $leftDelimiter  = null,
-        /*# string */ $rightDelimiter = null,
-        /*# string */ $namePattern = null
+        /*# string */ $referencePattern = null
     ) {
-        if (!is_null($leftDelimiter)) {
-            $this->pattern = sprintf(
-                '~(%s(%s)%s)~',
-                $leftDelimiter,
-                $namePattern,
-                $rightDelimiter
-            );
+        if (!is_null($referencePattern)) {
+            $this->pattern = $referencePattern;
         }
     }
 
@@ -123,7 +114,7 @@ abstract class ReferenceAbstract implements ReferenceInterface
         // recursive reference detection in string
         while(false !== ($res = $this->hasReference($str))) {
             // loop found
-            if ($level++ > 2) {
+            if ($level++ > 10) {
                 throw new LogicException(
                     Message::get(Message::CONFIG_REF_LOOP, $str),
                     Message::CONFIG_REF_LOOP

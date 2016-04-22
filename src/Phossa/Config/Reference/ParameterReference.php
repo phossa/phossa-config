@@ -36,7 +36,30 @@ class ParameterReference extends ReferenceAbstract
      * @var    string
      * @access protected
      */
-    protected $pattern = '~(\${([a-zA-Z_][a-zA-Z0-9._]*+)})~';
+    protected $pattern  = '~(\${([a-zA-Z_][a-zA-Z0-9._]*+)})~';
+
+    /**
+     * Field name splitter like '${level1.level2}'
+     *
+     * @var    string
+     * @access protected
+     */
+    protected $splitter = '.';
+
+    /**
+     * Create a new pattern to use
+     *
+     * @param  string $referencePattern
+     * @param  string $fieldSplitter
+     * @access public
+     */
+    public function __construct(
+        /*# string */ $referencePattern = null,
+        /*# string */ $fieldSplitter = '.'
+    ) {
+        parent::__construct($referencePattern);
+        $this->splitter = $fieldSplitter;
+    }
 
     /**
      * Get referenced value by name
@@ -76,7 +99,7 @@ class ParameterReference extends ReferenceAbstract
      */
     protected function superGlobalValue(/*# string */ $name)/*# : string */
     {
-        $pos = strpos($name, '.');
+        $pos = strpos($name, $this->splitter);
         if (false !== $pos) {
             $pref = substr($name, 0, $pos);
             $suff = substr($name, $pos + 1);
@@ -101,7 +124,7 @@ class ParameterReference extends ReferenceAbstract
     protected function myReferenceValue(/*# string */ $name)
     {
         // break into parts by '.'
-        $parts = explode('.', $name);
+        $parts = explode($this->splitter, $name);
 
         // data to search thru
         $found = $this->data;
