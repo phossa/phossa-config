@@ -16,7 +16,7 @@ namespace Phossa\Config\Helper;
 
 use Phossa\Config\Message\Message;
 use Phossa\Shared\Pattern\StaticAbstract;
-use Phossa\Config\Exception\RuntimeException;
+use Phossa\Config\Exception\LogicException;
 use Phossa\Config\Exception\NotFoundException;
 
 /**
@@ -95,7 +95,7 @@ class Environment extends StaticAbstract implements EnvironmentInterface
      *
      * @param  string $value
      * @return string
-     * @throws RuntimeException if error happens
+     * @throws LogicException if error happens
      * @access protected
      * @static
      */
@@ -108,7 +108,7 @@ class Environment extends StaticAbstract implements EnvironmentInterface
                 function ($matched) {
                     $env = static::matchEnv($matched[1]);
                     if (false === $env) {
-                        throw new RuntimeException(
+                        throw new LogicException(
                             Message::get(
                                 Message::CONFIG_ENV_UNKNOWN, $matched[1]
                             ),

@@ -5,6 +5,7 @@
 /.settings
 /.project
 /.buildpath
+/.externalToolBuilders
 
 # config
 .env*

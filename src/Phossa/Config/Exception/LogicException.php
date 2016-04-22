@@ -12,16 +12,20 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa\Config\Helper;
+namespace Phossa\Config\Exception;
+
+use Phossa\Shared\Exception\LogicException as LGException;
 
 /**
- * ValidatorInterface
+ * LogicException
  *
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
+ * @see     ExceptionInterface
+ * @see     \Phossa\Shared\Exception\LogicException
  * @version 1.0.0
  * @since   1.0.0 added
  */
-interface ValidatorInterface
+class LogicException extends LGException implements ExceptionInterface
 {
 }

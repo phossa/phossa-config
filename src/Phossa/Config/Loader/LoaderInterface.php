@@ -12,20 +12,28 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa\Config\Exception;
+namespace Phossa\Config\Loader;
 
-use Phossa\Shared\Exception\RuntimeException as RTException;
+use Phossa\Config\Exception\LogicException;
 
 /**
- * RuntimeException
+ * LoaderInterface
  *
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
- * @see     ExceptionInterface
- * @see     \Phossa\Shared\Exception\RuntimeException
  * @version 1.0.0
  * @since   1.0.0 added
  */
-class RuntimeException extends RTException implements ExceptionInterface
+interface LoaderInterface
 {
+    /**
+     * Parse file contents into config array
+     *
+     * @param  string $path file path
+     * @return array
+     * @throws LogicException
+     * @access public
+     * @static
+     */
+    public static function load(/*# string */ $path)/*# : array */;
 }

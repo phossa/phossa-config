@@ -75,7 +75,7 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
      * Tests Environment::deReference()
      *
      * @covers Phossa\Config\Helper\Environment::deReference()
-     * @expectedException Phossa\Config\Exception\RuntimeException
+     * @expectedException Phossa\Config\Exception\LogicException
      * @expectedExceptionMessageRegExp "Unknown environment"
      */
     public function testDeReference1()

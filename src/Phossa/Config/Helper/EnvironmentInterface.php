@@ -14,7 +14,7 @@
 
 namespace Phossa\Config\Helper;
 
-use Phossa\Config\Exception\RuntimeException;
+use Phossa\Config\Exception\LogicException;
 use Phossa\Config\Exception\NotFoundException;
 
 /**
@@ -32,7 +32,7 @@ interface EnvironmentInterface
      *
      * @param  string $path
      * @return void
-     * @throws RuntimeException if parse error
+     * @throws LogicException if parse error
      * @throws NotFoundException if no file found
      * @access public
      * @static
