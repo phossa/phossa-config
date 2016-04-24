@@ -30,7 +30,8 @@ class PhpLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad1()
     {
         $this->assertEquals(
-            ['test' => 'wow'], PhpLoader::load(__DIR__ . '/config_good.php')
+            ['test' => 'wow', 'bingo' => 'xxx'],
+            PhpLoader::load(__DIR__ . '/conf/config_good.php')
         );
     }
 
@@ -45,7 +46,8 @@ class PhpLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad2()
     {
         $this->assertEquals(
-            ['test' => 'wow'], PhpLoader::load(__DIR__ . '/nosuchfile.php')
+            ['test' => 'wow','bingo' => 'xxx'],
+            PhpLoader::load(__DIR__ . '/conf/nosuchfile.php')
         );
     }
 
@@ -60,7 +62,7 @@ class PhpLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad3()
     {
         $this->assertEquals(
-            ['test' => 'wow'], PhpLoader::load(__DIR__ . '/config_bad.php')
+            ['test' => 'wow'], PhpLoader::load(__DIR__ . '/conf/config_bad.php')
         );
     }
 
@@ -72,7 +74,7 @@ class PhpLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad4()
     {
         $this->assertEquals(
-            ['test' => 'wow'], PhpLoader::load(__DIR__ . '/config_callable.php')
+            ['test' => 'wow'], PhpLoader::load(__DIR__ . '/conf/config_callable.php')
         );
     }
 }

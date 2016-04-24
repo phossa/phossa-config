@@ -14,8 +14,10 @@
 
 namespace Phossa\Config;
 
+use Phossa\Config\Exception\InvalidArgumentException;
+
 /**
- *
+ * ConfigInterface
  *
  * @package Phossa\PACKAGE
  * @author  Hong Zhang <phossa@126.com>
@@ -25,30 +27,33 @@ namespace Phossa\Config;
 interface ConfigInterface
 {
     /**
-     * Get a configure value
+     * Get a configure value, if $key is null, get all configs
      *
-     * @param  string $key configuration key
+     * @param  null|string $key configuration key
      * @param  null|string|array default value
      * @return null|string|array
+     * @throws InvalidArgumentException if $key not a string
      * @access public
      */
-    public function get(/*# string */ $key, $default = null);
+    public function get($key, $default = null);
 
     /**
-     * Set configuration with key
+     * Set configuration, if $key is null, set ALL configs
      *
-     * @param  string $key configuration key
+     * @param  null|string $key configuration key
      * @param  string|array values
-     * @return void
+     * @return $this
+     * @throws InvalidArgumentException if $key not a string
      * @access public
      */
-    public function set(/*# string */ $key, $value);
+    public function set($key, $value);
 
     /**
      * Has a configure by key ?
      *
      * @param  string $key configuration key
      * @return bool
+     * @throws InvalidArgumentException if $key not a string
      * @access public
      */
     public function has(/*# string */ $key)/*# : bool */;

@@ -30,7 +30,7 @@ class IniLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad1()
     {
         $this->assertEquals(
-            ['test' => 'wow'], IniLoader::load(__DIR__ . '/config_good.ini')
+            ['test' => 'wow'], IniLoader::load(__DIR__ . '/conf/config_good.ini')
         );
     }
 
@@ -45,7 +45,7 @@ class IniLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad2()
     {
         $this->assertEquals(
-            ['test' => 'wow'], IniLoader::load(__DIR__ . '/nosuchfile.ini')
+            ['test' => 'wow'], IniLoader::load(__DIR__ . '/conf/nosuchfile.ini')
         );
     }
 
@@ -59,7 +59,7 @@ class IniLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad3()
     {
         $this->assertEquals(
-            ['test' => 'wow'], IniLoader::load(__DIR__ . '/config_bad.ini')
+            ['test' => 'wow'], IniLoader::load(__DIR__ . '/conf/config_bad.ini')
         );
     }
 }

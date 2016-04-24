@@ -12,32 +12,28 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa\Config\Reference;
+namespace Phossa\Config\Loader;
+
+use Phossa\Config\Exception\LogicException;
 
 /**
- * ReferenceAbstract
+ * FileLoaderInterface
  *
- * @abstract
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
  * @version 1.0.0
  * @since   1.0.0 added
  */
-abstract class ReferenceAbstract
+interface FileLoaderInterface
 {
-    use TreeTrait, ReferenceTrait;
-
     /**
-     * Constructor, reset reference pattern if you want to
+     * Parse file contents into config array
      *
-     * @param  string $referencePattern
+     * @param  string $path file path
+     * @return array
+     * @throws LogicException if something goes wrong
      * @access public
+     * @static
      */
-    public function __construct(
-        /*# string */ $referencePattern = null
-    ) {
-        if (!is_null($referencePattern)) {
-            $this->pattern = $referencePattern;
-        }
-    }
+    public static function load(/*# string */ $path)/*# : array */;
 }

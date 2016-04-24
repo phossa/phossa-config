@@ -30,7 +30,7 @@ class JsonLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad1()
     {
         $this->assertEquals(
-            ['test' => 'wow'], JsonLoader::load(__DIR__ . '/config_good.json')
+            ['test' => 'json'], JsonLoader::load(__DIR__ . '/conf/config_good.json')
         );
     }
 
@@ -45,7 +45,7 @@ class JsonLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad2()
     {
         $this->assertEquals(
-            ['test' => 'wow'], JsonLoader::load(__DIR__ . '/nosuchfile.json')
+            ['test' => 'json'], JsonLoader::load(__DIR__ . '/conf/nosuchfile.json')
         );
     }
 
@@ -60,7 +60,7 @@ class JsonLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad3()
     {
         $this->assertEquals(
-            ['test' => 'wow'], JsonLoader::load(__DIR__ . '/config_bad.json')
+            ['test' => 'json'], JsonLoader::load(__DIR__ . '/conf/config_bad.json')
         );
     }
 }

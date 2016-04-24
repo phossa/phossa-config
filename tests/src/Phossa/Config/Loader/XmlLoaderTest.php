@@ -30,7 +30,7 @@ class XmlLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad1()
     {
         $this->assertEquals(
-            ['test' => 'wow'], XmlLoader::load(__DIR__ . '/config_good.xml')
+            ['test' => 'wow'], XmlLoader::load(__DIR__ . '/conf/config_good.xml')
         );
     }
 
@@ -45,7 +45,7 @@ class XmlLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad2()
     {
         $this->assertEquals(
-            ['test' => 'wow'], XmlLoader::load(__DIR__ . '/nosuchfile.xml')
+            ['test' => 'wow'], XmlLoader::load(__DIR__ . '/conf/nosuchfile.xml')
         );
     }
 
@@ -60,7 +60,7 @@ class XmlLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad3()
     {
         $this->assertEquals(
-            ['test' => 'wow'], XmlLoader::load(__DIR__ . '/config_bad.xml')
+            ['test' => 'wow'], XmlLoader::load(__DIR__ . '/conf/config_bad.xml')
         );
     }
 }

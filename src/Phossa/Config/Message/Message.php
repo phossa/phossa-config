@@ -72,6 +72,21 @@ class Message extends MessageAbstract
      */
     const CONFIG_REF_UNKNOWN        = 1604211347;
 
+    /**
+     * Config key "%s" is not a string
+     */
+    const CONFIG_KEY_INVALID        = 1604211348;
+
+    /**
+     * Dir "%s" is nonexist or not readable
+     */
+    const CONFIG_DIR_INVALID        = 1604211349;
+
+    /**
+     * Invalid value to set
+     */
+    const CONFIG_VALUE_INVALID      = 1604211350;
+
     /**#@-*/
 
     /**
@@ -86,5 +101,8 @@ class Message extends MessageAbstract
         self::CONFIG_REF_MALFORM    => 'Malformed reference found in "%s"',
         self::CONFIG_REF_LOOP       => 'Reference loop found in "%s"',
         self::CONFIG_REF_UNKNOWN    => 'Reference name "%s" unknown',
+        self::CONFIG_KEY_INVALID    => 'Config key "%s" is not a string',
+        self::CONFIG_DIR_INVALID    => 'Dir "%s" is nonexist or not readable',
+        self::CONFIG_VALUE_INVALID  => 'Invalid value to set',
     ];
 }

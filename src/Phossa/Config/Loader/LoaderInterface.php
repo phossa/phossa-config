@@ -15,6 +15,7 @@
 namespace Phossa\Config\Loader;
 
 use Phossa\Config\Exception\LogicException;
+use Phossa\Config\Exception\InvalidArgumentException;
 
 /**
  * LoaderInterface
@@ -27,13 +28,30 @@ use Phossa\Config\Exception\LogicException;
 interface LoaderInterface
 {
     /**
-     * Parse file contents into config array
+     * Set the root directory
      *
-     * @param  string $path file path
-     * @return array
-     * @throws LogicException
+     * @param  string $rootDir
+     * @param  string config file type
+     * @return $this
+     * @throws InvalidArgumentException
      * @access public
-     * @static
      */
-    public static function load(/*# string */ $path)/*# : array */;
+    public function __invoke(
+        /*# string */ $rootDir,
+        /*# string */ $fileType = 'php'
+    );
+
+    /**
+     * Load group config files base on environment. Load all if $group is null.
+     *
+     * @param  null|string $group
+     * @param  string $environment
+     * @return null|array
+     * @throws LogicException if something goes wrong
+     * @access public
+     */
+    public function load(
+        $group,
+        /*# string */ $environment = null
+    );
 }

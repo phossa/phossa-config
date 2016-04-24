@@ -22,11 +22,11 @@ use Phossa\Config\Exception\LogicException;
  *
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
- * @see     LoaderInterface
+ * @see     FileLoaderInterface
  * @version 1.0.0
  * @since   1.0.0 added
  */
-class XmlLoader implements LoaderInterface
+class XmlLoader implements FileLoaderInterface
 {
     /**
      * {@inheritDoc}
