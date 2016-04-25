@@ -93,7 +93,7 @@ class Cache implements CacheInterface
      */
     public function save(array $data)
     {
-        @file_put_contents($this->getFileName(), serialize($data));
+        file_put_contents($this->getFileName(), serialize($data));
         return $this;
     }
 
@@ -102,9 +102,9 @@ class Cache implements CacheInterface
      */
     public function get()
     {
-        $str = @file_get_contents($this->getFileName());
+        $str = file_get_contents($this->getFileName());
         if ($str) {
-            return @unserialize($str);
+            return unserialize($str);
         }
         return false;
     }

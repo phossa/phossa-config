@@ -37,7 +37,7 @@ abstract class ReferenceAbstract
         /*# string */ $referencePattern = null
     ) {
         if (!is_null($referencePattern)) {
-            $this->pattern = $referencePattern;
+            $this->reference_pattern = $referencePattern;
         }
     }
 }

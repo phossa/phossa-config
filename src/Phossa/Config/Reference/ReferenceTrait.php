@@ -69,7 +69,6 @@ trait ReferenceTrait
         )) {
             $res = [];
             foreach ($matched as $m) {
-                // '${name}' => 'name'
                 $res[$m[1]] = $m[2];
             }
             return $res;
@@ -205,7 +204,7 @@ trait ReferenceTrait
      * If unresolved reference found, try this
      *
      * @param  string $name
-     * @return null|string
+     * @return null|string|array
      * @access protected
      */
     protected function resolveUnResolved(/*# : string */ $name)
