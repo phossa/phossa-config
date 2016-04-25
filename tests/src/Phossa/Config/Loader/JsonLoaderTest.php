@@ -50,12 +50,10 @@ class JsonLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * bad format
+     * bad format. php5.4 won't support syntax error !
      *
      * @covers Phossa\Config\Loader\JsonLoader::load()
      * @expectedException Phossa\Config\Exception\LogicException
-     * @expectedExceptionMessageRegExp "Syntax error"
-     * @expectedExceptionCode Phossa\Config\Message\Message::CONFIG_FORMAT_ERROR
      */
     public function testLoad3()
     {
