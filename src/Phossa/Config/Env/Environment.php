@@ -78,7 +78,7 @@ class Environment implements EnvironmentInterface
     protected function getContents(/*# string */ $path)/*# string */
     {
         // read in file
-        $contents = file_get_contents($path);
+        $contents = @file_get_contents($path);
 
         // failed
         if (false === $contents) {

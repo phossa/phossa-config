@@ -102,9 +102,12 @@ class Cache implements CacheInterface
      */
     public function get()
     {
-        $str = file_get_contents($this->getFileName());
-        if ($str) {
-            return unserialize($str);
+        $file = $this->getFileName();
+        if (is_file($file)) {
+            $str = file_get_contents($file);
+            if ($str) {
+                return unserialize($str);
+            }
         }
         return false;
     }
