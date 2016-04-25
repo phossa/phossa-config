@@ -24,11 +24,11 @@ Features
 - One central place for all config files
 
   ```
-  config
+  config/
    |
-   |____ production
+   |____ production/
    |        |
-   |        |____ host1
+   |        |____ host1/
    |        |       |___ redis.php
    |        |       |___ db.php
    |        |
@@ -39,16 +39,16 @@ Features
    |____ redis.php
   ```
 
-- Use an [environment](#env) value `production` or `production/host1` for
+- Use an [environment](#env) value, e.g. `production` or `production/host1` for
   switching between `development`, `staging` or `production`.
 
 - Support `.php`, `.json`, `.ini` and `.xml` type of configuration files.
 
-- [Reference](#ref) is possible like `${system.tmpdir}` in configuration.
+- [Reference](#ref) is possible, such as `${system.tmpdir}` in configuration.
 
 - On demand configuration loading (lazy loading).
 
-- Load all configuration files in one shot with
+- Load all configuration files in one shot with `$config->get(null)`
 
 - Configuration [cache](#cache).
 
@@ -135,7 +135,7 @@ Usage
 
 - <a name="group"></a>Grouping
 
-  Configurations are grouping into groups, namely files. For example, the
+  Configurations are grouped into groups, namely files. For example, the
   `system.php` holds all `system.*` configurations
 
   ```php
@@ -146,13 +146,13 @@ Usage
   ];
   ```
 
-  Later in the program, system related configs can be retrieved as
+  Later, system related configs can be retrieved as
 
   ```php
   $dir = $config->get('system.tmpdir');
   ```
 
-  Or being used in other config files as [reference](#ref).
+  Or being used in other configs as [reference](#ref).
 
 - <a name="cache"></a>Caching
 
@@ -179,7 +179,7 @@ Usage
 
   - Pros of using caching
 
-  	- Speedup. Read from one file instead of lots of configuration files.
+  	- Speed up. Read from one file instead of lots of configuration files.
 
   	- [References](#ref) like `${system.tmpdir}` are done already.
 
@@ -232,7 +232,7 @@ Usage
 
   - `config/config/db.php`
 
-- <a name="api"></a>API
+- <a name="api"></a>Config API
 
   - `get($key, $default = null)`
 
