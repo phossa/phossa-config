@@ -147,7 +147,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad4()
     {
         $loader = $this->loader;
-        $loader(__DIR__.'\\conf\\production\\');
+        $loader(__DIR__.'/conf/production');
 
         $this->assertEquals(
             [
