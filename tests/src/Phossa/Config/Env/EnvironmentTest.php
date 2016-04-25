@@ -1,5 +1,5 @@
 <?php
-namespace Phossa\Config\Helper;
+namespace Phossa\Config\Env;
 
 /**
  * Environment test case.
@@ -12,7 +12,7 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
      * @var    string
      * @access protected
      */
-    protected $class_name;
+    protected $object;
 
     /**
      * Prepares the environment before running a test.
@@ -20,7 +20,7 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->class_name = '\\Phossa\\Config\\Helper\\Environment';
+        $this->object = new Environment();
     }
 
     /**
@@ -28,6 +28,7 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        $this->object = null;
         parent::tearDown();
     }
 
@@ -39,76 +40,75 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
      * @return \ReflectionMethod
      * @access protected
      */
-    protected function getMethod($className, $methodName) {
-        $class = new \ReflectionClass($className);
+    protected function getMethod($methodName) {
+        $class = new \ReflectionClass($this->object);
         $method = $class->getMethod($methodName);
         $method->setAccessible(true);
         return $method;
     }
 
     /**
-     * Tests Environment::matchEnv()
-     *
-     * @covers Phossa\Config\Helper\Environment::matchEnv()
+     * @covers Phossa\Config\Env\Environment::matchEnv()
      */
     public function testMatchEnv()
     {
-        $method = $this->getMethod($this->class_name, 'matchEnv');
+        $method = $this->getMethod('matchEnv');
 
         // existing env
         putenv('test=bingo');
-        $this->assertEquals('bingo', $method->invokeArgs(null, ['test']));
+        $this->assertEquals('bingo',
+            $method->invokeArgs($this->object, ['test']));
 
         // remove env
         putenv('test');
-        $this->assertFalse($method->invokeArgs(null, ['test']));
+        $this->assertFalse($method->invokeArgs($this->object, ['test']));
 
         // super globals
         $_SERVER['test'] = 'bingo';
-        $this->assertEquals('bingo', $method->invokeArgs(null, ['_SERVER.test']));
+        $this->assertEquals('bingo',
+            $method->invokeArgs($this->object, ['_SERVER.test']));
 
         unset($_SERVER['test']);
-        $this->assertFalse($method->invokeArgs(null, ['_SERVER.test']));
+        $this->assertFalse($method->invokeArgs($this->object, ['_SERVER.test']));
     }
 
     /**
-     * Tests Environment::deReference()
-     *
-     * @covers Phossa\Config\Helper\Environment::deReference()
+     * @covers Phossa\Config\Env\Environment::deReference()
      * @expectedException Phossa\Config\Exception\LogicException
      * @expectedExceptionMessageRegExp "Unknown environment"
      */
     public function testDeReference1()
     {
-        $method = $this->getMethod($this->class_name, 'deReference');
-        $this->assertEquals('bingowow', $method->invokeArgs(null, ['${test}wow']));
+        $method = $this->getMethod('deReference');
+        $this->assertEquals('bingowow',
+            $method->invokeArgs($this->object, ['${test}wow']));
     }
 
     /**
-     * Tests Environment::deReference()
-     *
-     * @covers Phossa\Config\Helper\Environment::deReference()
+     * @covers Phossa\Config\Env\Environment::deReference()
      */
     public function testDeReference2()
     {
-        $method = $this->getMethod($this->class_name, 'deReference');
+        $method = $this->getMethod('deReference');
 
         putenv('test=bingo');
-        $this->assertEquals('bingowow', $method->invokeArgs(null, ['${test}wow']));
+        $this->assertEquals('bingowow',
+            $method->invokeArgs($this->object, ['${test}wow']));
 
         putenv('bingo=wow');
-        $this->assertEquals('wowwow', $method->invokeArgs(null, ['${${test}}wow']));
+        $this->assertEquals('wowwow',
+            $method->invokeArgs($this->object, ['${${test}}wow']));
 
         putenv('test');
         putenv('bingo');
     }
 
     /**
-     * @covers Phossa\Config\Helper\Environment::parse()
+     * @covers Phossa\Config\Env\Environment::parse()
      */
     public function testParse()
     {
-        $method = $this->getMethod($this->class_name, 'parse');
+        $method = $this->getMethod('parse');
 
         // existing env
         $str = '
@@ -120,21 +120,19 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
         ';
         $this->assertEquals(
             ['test1' => 'bingo1', 'test2' => '${test1}bingo2'],
-            $method->invokeArgs(null, [$str])
+            $method->invokeArgs($this->object, [$str])
         );
     }
 
     /**
-     * Tests Environment::load()
-     *
-     * @covers Phossa\Config\Helper\Environment::load()
+     * @covers Phossa\Config\Env\Environment::load()
      */
     public function testLoad1()
     {
         // preset $_SERVER
         $_SERVER['test'] = 'xxx';
 
-        Environment::load(__DIR__ . '/envfile.txt');
+        $this->object->load(__DIR__ . '/envfile.txt');
 
         $this->assertEquals('bing', getenv('test1'));
         $this->assertEquals('bingwow', getenv('test2'));
@@ -155,13 +153,13 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
     /**
      * Test load env file failure
      *
-     * @covers Phossa\Config\Helper\Environment::load()
+     * @covers Phossa\Config\Env\Environment::load()
      * @expectedException Phossa\Config\Exception\NotFoundException
      * @expectedExceptionMessageRegExp "not found or not readable"
      */
     public function testLoad2()
     {
-        Environment::load(__DIR__ . '/nonexitfile.txt');
+        $this->object->load(__DIR__ . '/nonexitfile.txt');
     }
 }
 

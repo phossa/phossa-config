@@ -2,7 +2,7 @@
     "name": "phossa/phossa-config",
     "license": "MIT",
     "type": "library",
-    "description": "A PHP config libraray",
+    "description": "Configuration management libraray for PHP",
     "keywords": ["phossa", "config", "configure", "configuration"],
     "homepage": "https://github.com/phossa/phossa-config",
     "authors": [

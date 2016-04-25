@@ -16,7 +16,6 @@ namespace Phossa\Config\Loader;
 
 use Phossa\Config\Message\Message;
 use Phossa\Config\Exception\InvalidArgumentException;
-use Phossa\Config\Exception\LogicException;
 
 /**
  * Config file loader
@@ -36,6 +35,14 @@ class Loader implements LoaderInterface
      * @access protected
      */
     protected $root_dir;
+
+    /**
+     * subdirectories to load files
+     *
+     * @var    array
+     * @access protected
+     */
+    protected $sub_dirs;
 
     /**
      * config file suffix/type
@@ -58,72 +65,114 @@ class Loader implements LoaderInterface
      */
     public function __invoke(
         /*# string */ $rootDir,
-        /*# string */ $fileType = 'php'
+        /*# string */ $fileType = 'php',
+        /*# string */ $environment = null
     ) {
-        if (!is_string($rootDir) ||
-            !is_dir($rootDir) ||
-            !is_readable($rootDir)
-        ) {
-            throw new InvalidArgumentException(
-                Message::get(Message::CONFIG_DIR_INVALID, $rootDir),
-                Message::CONFIG_DIR_INVALID
-            );
-        } else {
-            $this->root_dir  = $rootDir;
-            $this->file_type = $fileType;
-            $class = __NAMESPACE__ . '\\' . ucfirst($fileType) . 'Loader';
-
-            // not supported config type
-            if (!class_exists($class, true)) {
-                throw new InvalidArgumentException(
-                    Message::get(Message::CONFIG_SUFFIX_UNKNOWN, $fileType),
-                    Message::CONFIG_SUFFIX_UNKNOWN
-                );
-            }
-            $this->loader_class = $class;
-
-            return $this;
-        }
+        return $this->setRootDir($rootDir)
+                    ->setFileType($fileType)
+                    ->setEnvironment($environment);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function load(
-        $group,
-        /*# string */ $environment = null
-    ) {
-        $subdirs = [''];
+    public function load($group, $environment = null)
+    {
+        // reset environment
         if (null !== $environment) {
-            $subdirs = array_merge(
-                $subdirs,
-                preg_split('/[\/\\\]/', $environment, 0, \PREG_SPLIT_NO_EMPTY)
-            );
+            $this->setEnvironment($environment);
         }
 
         $path  = $this->root_dir;
+        $sepr  = \DIRECTORY_SEPARATOR;
         $class = $this->loader_class;
-        $conf  = [];
-        foreach($subdirs as $dir)
-        {
-            $path .= $dir . DIRECTORY_SEPARATOR;
+        $data  = [];
+        foreach($this->sub_dirs as $dir) {
+            // construct new path with each sub dir
+            $path = rtrim($path . $sepr . $dir, '/\\');
+
+            // load all config files
             if (null === $group) {
-                $files = glob("{$path}*.{$this->file_type}");
+                $files = glob("{$path}{$sepr}*.{$this->file_type}");
+
+            // load one type of group files
             } else {
-                $files = [ "{$path}{$group}.{$this->file_type}" ];
+                $files = [ "{$path}{$sepr}{$group}.{$this->file_type}" ];
             }
 
             foreach ($files as $file) {
                 if (is_file($file)) {
-                    $conf = array_replace_recursive($conf, $class::load($file));
-                } else {
-                    throw new LogicException(
-                        Message::get(Message::CONFIG_LOAD_ERROR, $file),
-                        Message::CONFIG_LOAD_ERROR
-                    );
+                    $grp = basename($file, '.' . $this->file_type);
+                    $data[$grp][] = $class::load($file);
                 }
             }
         }
-        return $conf ?: null;
+        return $data;
+    }
+
+    /**
+     * Set root directory
+     *
+     * @param  string $rootDir
+     * @return $this
+     * @throws InvalidArgumentException if dir is bad
+     * @access protected
+     */
+    protected function setRootDir(/*# string */ $rootDir)
+    {
+        // validate root directory
+        if (!is_string($rootDir) || !is_dir($rootDir) || !is_readable($rootDir))
+        {
+            throw new InvalidArgumentException(
+                Message::get(Message::CONFIG_DIR_INVALID, $rootDir),
+                Message::CONFIG_DIR_INVALID
+            );
+        }
+        $this->root_dir = rtrim($rootDir, '/\\');
+
+        return $this;
+    }
+
+    /**
+     * Set config file type
+     *
+     * @param  string $fileType
+     * @return $this
+     * @throws InvalidArgumentException if unsupported file type
+     * @access protected
+     */
+    protected function setFileType(/*# string */ $fileType)
+    {
+        // validate file type
+        $class = __NAMESPACE__ . '\\' . ucfirst($fileType) . 'Loader';
+        if (!class_exists($class, true)) {
+            throw new InvalidArgumentException(
+                Message::get(Message::CONFIG_SUFFIX_UNKNOWN, $fileType),
+                Message::CONFIG_SUFFIX_UNKNOWN
+            );
+        }
+        $this->file_type = $fileType;
+        $this->loader_class = $class;
+
+        return $this;
+    }
+
+    /**
+     * Set environment
+     *
+     * @param  null|string $environment
+     * @return $this
+     * @access protected
+     */
+    protected function setEnvironment($environment)
+    {
+        $subdirs = [''];
+        if (null !== $environment) {
+            $subdirs = array_merge($subdirs, preg_split('/[\/\\\]/',
+                trim($environment, '/\\'), 0, \PREG_SPLIT_NO_EMPTY));
+        }
+        $this->sub_dirs = $subdirs;
+
+        return $this;
     }
 }

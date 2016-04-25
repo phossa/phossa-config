@@ -101,7 +101,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad1()
     {
         $this->assertEquals(
-            ['test' => 'wow', 'bingo' => 'xxx'],
+            [ 'config_good' => [['test' => 'wow', 'bingo' => 'xxx']]],
             $this->loader->load('config_good')
         );
     }
@@ -114,7 +114,10 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad2()
     {
         $this->assertEquals(
-            ['test' => 'prod', 'bingo' => 'xxx'],
+            [ 'config_good' => [
+                ['test' => 'wow',  'bingo' => 'xxx'],
+                ['test' => 'prod']
+            ]],
             $this->loader->load('config_good', 'production')
         );
     }
@@ -127,7 +130,11 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoad3()
     {
         $this->assertEquals(
-            ['test' => 'prod', 'bingo' => 'yyy'],
+            ['config_good' => [
+                ['test' => 'wow',  'bingo' => 'xxx'],
+                ['test' => 'prod'],
+                ['bingo' => 'yyy']
+            ]],
             $this->loader->load('config_good', 'production\\host1')
         );
     }
@@ -142,10 +149,18 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
         $loader = $this->loader;
         $loader(__DIR__.'\\conf\\production\\');
 
-        $res = $loader->load(null, 'host1');
-        $this->assertEquals('all', $res['all']);
-        $this->assertEquals('prod', $res['test']);
-        $this->assertEquals('yyy', $res['bingo']);
+        $this->assertEquals(
+            [
+                'all' => [
+                    ['all' => 'all']
+                ],
+                'config_good' => [
+                    ['test' => 'prod'],
+                    ['bingo' => 'yyy']
+                ]
+            ],
+            $loader->load(null, 'host1')
+        );
     }
 
     /**
@@ -159,7 +174,8 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
         $loader(__DIR__.'/conf', 'json');
 
         $this->assertEquals(
-            ['test' => 'json'], $loader->load('config_good')
+            [ 'config_good' => [['test' => 'json'] ]],
+            $loader->load('config_good')
         );
     }
 }

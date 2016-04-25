@@ -15,8 +15,13 @@
 namespace Phossa\Config;
 
 use Phossa\Config\Loader\Loader;
+use Phossa\Config\Cache\CacheInterface;
+use Phossa\Config\Cache\CacheAwareTrait;
 use Phossa\Config\Loader\LoaderInterface;
+use Phossa\Config\Cache\CacheAwareInterface;
 use Phossa\Config\Exception\InvalidArgumentException;
+use Phossa\Config\Exception\LogicException;
+use Phossa\Config\Message\Message;
 
 /**
  * Config class with support for environment, reference, cache
@@ -24,7 +29,7 @@ use Phossa\Config\Exception\InvalidArgumentException;
  * Read in configuration from config files base on environment given.
  *
  * - Environment: environment can be in env file (bash style .env) and can
- *   be loaded into process' environment by Helper\Environment::load(file)
+ *   be loaded into process' environment by Env\Environment::load(file)
  *
  * - Resolving any references in the configs like '${system.dir}'.
  *
@@ -36,10 +41,12 @@ use Phossa\Config\Exception\InvalidArgumentException;
  * @version 1.0.0
  * @since   1.0.0 added
  */
-class Config extends Parameter
+class Config extends Parameter implements CacheAwareInterface
 {
+    use CacheAwareTrait;
+
     /**
-     * the main config directory
+     * config root directory
      *
      * @var    string
      * @access protected
@@ -47,15 +54,7 @@ class Config extends Parameter
     protected $directory;
 
     /**
-     * environment like 'production/host1'
-     *
-     * @var    string
-     * @access protected
-     */
-    protected $environment;
-
-    /**
-     * loader
+     * config file loader
      *
      * @var    LoaderInterface
      * @access protected
@@ -63,7 +62,7 @@ class Config extends Parameter
     protected $loader;
 
     /**
-     * everything loaded from all config files
+     * true if all config files loaded
      *
      * @var    bool
      * @access protected
@@ -73,37 +72,58 @@ class Config extends Parameter
     /**
      * Constructor
      *
-     * To disable reference feature: set $referencePattern = ''
+     * - set the root directory holding config files
+     *
+     * - set current running environment if any
+     *
+     * - config file type, support php|json|ini|xml
+     *
+     * - provide a loader object if not using the default one
+     *
+     * - reference support, default pattern like '${system.dir}'
+     *   to disable this feature, set $referencePattern = ''
      *
      * @param  string $configDirectory the configuration directory
      * @param  string $environment the environment like 'production/host1'
      * @param  string $fileType config file type 'php|ini|xml|json'
+     * @param  CacheInterface $cache cache pool object if any
      * @param  LoaderInterface $loader
      * @param  string $referencePattern change reference pattern if want to
-     * @throws InvalidArgumentException if directory not right
+     *
+     * @throws InvalidArgumentException if dir is bad or unsupported file type
      * @access public
      */
     public function __construct(
         /*# string */ $configDirectory,
         /*# string */ $environment = null,
         /*# string */ $fileType = 'php',
+        CacheInterface $cache   = null,
         LoaderInterface $loader = null,
         /*# string */ $referencePattern = null
     ) {
-        // set config root directory
-        $this->directory = rtrim($configDirectory, '/\\') . DIRECTORY_SEPARATOR;
+        // root directory
+        $this->directory = $configDirectory;
 
-        // set environment
-        $this->environment = trim($environment, '/\\');
+        // get from cache
+        if (null !== $cache) {
+            $this->setCache($cache($configDirectory, $fileType, $environment));
+            if (is_array($conf = $cache->get())) {
+                parent::__construct($conf, $referencePattern);
+                $this->all_loaded = true;
+            }
+
+        // init with empty data
+        } else {
+            parent::__construct([], $referencePattern);
+        }
 
         // set loader
-        if (null == $loader) {
+        if (null === $loader) {
             $loader = new Loader(); // use default
         }
-        $this->loader = $loader($configDirectory, $fileType);
 
-        // init config pool and set reference pattern
-        parent::__construct([], $referencePattern);
+        // init loader
+        $this->loader = $loader($configDirectory, $fileType, $environment);
     }
 
     /**
@@ -111,7 +131,10 @@ class Config extends Parameter
      */
     public function get($key, $default = null)
     {
+        // lazy load
         $this->loadConfig($key);
+
+        // get the $key
         return parent::get($key, $default);
     }
 
@@ -124,20 +147,40 @@ class Config extends Parameter
         if (null !== $key) {
             $this->loadConfig($key);
         }
+
+        // set the pair
         return parent::set($key, $value);
     }
 
     /**
-     * Read in config files
+     * User need to make $this->all_loaded is true!
+     *
+     * {@inheritDoc}
+     */
+    public function save()
+    {
+        if (null === $this->cache) {
+            throw new LogicException(
+                Message::get(Message::CACHE_NOT_READY),
+                Message::CACHE_NOT_READY
+            );
+        }
+        $this->loadConfig(null);
+        $this->cache->save($this->pool);
+        return $this;
+    }
+
+    /**
+     * Read in config files for $key
      *
      * @param  null|string $key
-     * @return this
+     * @return $this
      * @throws InvalidArgumentException if $key is not a string
      * @access protected
      */
     protected function loadConfig($key)
     {
-        // all loaded
+        // all config files loaded
         if ($this->all_loaded) {
             return $this;
         }
@@ -176,21 +219,33 @@ class Config extends Parameter
      */
     protected function loadGroupConfig($group)
     {
-        // load from files
-        $res = $this->loader->load($group, $this->environment);
+        // data from files
+        $res = $this->loader->load($group);
 
         // mark pool dirty
         if (count($res)) {
             $this->setPoolDirty();
         }
 
+        $config = [];
+        foreach($res as $grp => $grpData) {
+            if (!isset($config[$grp])) {
+                $config[$grp] = [];
+            }
+            foreach ($grpData as $data) {
+                $config[$grp] = array_replace_recursive(
+                    $config[$grp], $this->fixValue($data)
+                );
+            }
+        }
+
         // set the whole pool
         if (null === $group) {
-            $this->pool = $res ?: [];
+            $this->pool = $config;
 
         // set a group
         } else {
-            $this->pool[$group] = $this->fixValue($res);
+            $this->pool[$group] = $config[$group];
         }
     }
 
@@ -207,17 +262,17 @@ class Config extends Parameter
         // get group
         $group = $this->getFirstField($name);
 
-        // group loaded already
+        // group loaded already, $name still unknown, return null
         if (isset($this->pool[$group])) {
             return null;
         }
 
-        // ignore super globals
+        // unknown superglobal values, return null
         if ('_' === $group[0] && isset($GLOBALS[$group])) {
             return null;
         }
 
-        // try load group
+        // try get $name
         return $this->get($name);
     }
 }

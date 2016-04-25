@@ -81,7 +81,38 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             'warning',
             $this->object->get('logger.watchdog.level')
-            );
+        );
+        $this->assertEquals(
+            'Prod1',
+            $this->object->get('logger.prod1.channel')
+        );
+    }
+
+    /**
+     * Test root/production/host1 level config
+     *
+     * @covers Phossa\Config\Reference\Config::get()
+     */
+    public function testGet3()
+    {
+        $this->object = new Config(__DIR__.'/testData/', 'production/host1');
+
+        $this->assertEquals(
+            'bingo',
+            $this->object->get('db.auth.user')
+        );
+        $this->assertEquals(
+            'nopass',
+            $this->object->get('db.auth.pass')
+        );
+        $this->assertEquals(
+            'dbhost',
+            $this->object->get('db.auth.host')
+        );
+        $this->assertEquals(
+            3506,
+            $this->object->get('db.auth.port')
+        );
     }
 
     /**

@@ -12,7 +12,7 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa\Config\Helper;
+namespace Phossa\Config\Env;
 
 use Phossa\Config\Exception\LogicException;
 use Phossa\Config\Exception\NotFoundException;
@@ -28,14 +28,13 @@ use Phossa\Config\Exception\NotFoundException;
 interface EnvironmentInterface
 {
     /**
-     * Load env from a file
+     * Load env from a path (local file, other storage etc.)
      *
      * @param  string $path
-     * @return void
+     * @return $this
      * @throws LogicException if parse error
-     * @throws NotFoundException if no file found
+     * @throws NotFoundException if $path not found
      * @access public
-     * @static
      */
-    public static function load(/*# string */ $path);
+    public function load(/*# string */ $path);
 }

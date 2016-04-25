@@ -87,6 +87,21 @@ class Message extends MessageAbstract
      */
     const CONFIG_VALUE_INVALID      = 1604211350;
 
+    /**
+     * Invalid cache directory "%s"
+     */
+    const CACHE_DIR_INVALID         = 1604211351;
+
+    /**
+     * Cache directory "%s" not writable
+     */
+    const CACHE_DIR_NONWRITABLE     = 1604211352;
+
+    /**
+     * Config cache not set yet
+     */
+    const CACHE_NOT_READY           = 1604211353;
+
     /**#@-*/
 
     /**
@@ -104,5 +119,8 @@ class Message extends MessageAbstract
         self::CONFIG_KEY_INVALID    => 'Config key "%s" is not a string',
         self::CONFIG_DIR_INVALID    => 'Dir "%s" is nonexist or not readable',
         self::CONFIG_VALUE_INVALID  => 'Invalid value to set',
+        self::CACHE_DIR_INVALID     => 'Invalid cache directory "%s"',
+        self::CACHE_DIR_NONWRITABLE => 'Cache directory "%s" not writable',
+        self::CACHE_NOT_READY       => 'Config cache not set yet',
     ];
 }

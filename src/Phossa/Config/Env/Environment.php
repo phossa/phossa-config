@@ -12,46 +12,75 @@
  */
 /*# declare(strict_types=1); */
 
-namespace Phossa\Config\Helper;
+namespace Phossa\Config\Env;
 
 use Phossa\Config\Message\Message;
-use Phossa\Shared\Pattern\StaticAbstract;
 use Phossa\Config\Exception\LogicException;
 use Phossa\Config\Exception\NotFoundException;
 
 /**
- * Load env from a file
+ * One implementation of EnvironmentInterface
+ *
+ * - Load ENV from local file system, normally a '.env' file.
+ * - Other implmentationmay just need to override `getContents()` method
  *
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
  * @see     EnvironmentInterface
- * @see     StaticAbstract
  * @version 1.0.0
  * @since   1.0.0 added
  */
-class Environment extends StaticAbstract implements EnvironmentInterface
+class Environment implements EnvironmentInterface
 {
     /**
-     * env variable name pattern
+     * ENV variable name pattern
      *
      * @var    string
+     * @access protected
      */
-    const NAME_PATTERN  = '[a-zA-Z_][a-zA-Z0-9_.]*+';
+    protected $name_pattern  = '[a-zA-Z_][a-zA-Z0-9_.]*+';
 
     /**
-     * env variable value pattern
+     * ENV variable value pattern
+     *
+     * Started with non-(space|#) upto # or EOL, spaces are allowed in between
      *
      * @var    string
+     * @access protected
      */
-    const VALUE_PATTERN = '[^\s#\r\n][^#\r\n]*';
+    protected $value_pattern = '[^\s#\r\n][^#\r\n]*';
 
     /**
      * {@inheritDoc}
      */
-    public static function load(/*# string */ $path)
+    public function load(/*# string */ $path)
+    {
+        $contents = $this->getContents($path);
+
+        // parse & set env
+        foreach ($this->parse($contents) as $name => $val) {
+            // dereference if need to
+            $val = $this->deReference($val);
+
+            // set ENV
+            putenv("${name}=${val}");
+        }
+    }
+
+    /**
+     * Read contents from a local file system
+     *
+     * @param  string $path
+     * @return string
+     * @access protected
+     * @throws NotFoundException if no file found
+     */
+    protected function getContents(/*# string */ $path)/*# string */
     {
         // read in file
         @$contents = file_get_contents($path);
+
+        // failed
         if (false === $contents) {
             throw new NotFoundException(
                 Message::get(Message::CONFIG_FILE_NOTFOUND, $path),
@@ -59,28 +88,23 @@ class Environment extends StaticAbstract implements EnvironmentInterface
             );
         }
 
-        // set env
-        foreach (static::parse($contents) as $name => $val) {
-            $val = static::deReference($val);
-            putenv("${name}=${val}");
-        }
+        return $contents;
     }
 
     /**
-     * parse and return key/value pairs in array
+     * parse and return name/value pairs in array
      *
      * @param  string $contents
      * @return array
      * @access protected
-     * @static
      */
-    protected static function parse(/*# string */ $contents)/*# : array */
+    protected function parse(/*# string */ $contents)/*# : array */
     {
         $result = [];
         $regex = sprintf(
             '/^\s*+(%s)\s*+=\s*+(%s)(?:#.*+)?\s*$/m',
-            self::NAME_PATTERN,
-            self::VALUE_PATTERN
+            $this->name_pattern,
+            $this->value_pattern
         );
         if (preg_match_all($regex, $contents, $matched, \PREG_SET_ORDER)) {
             foreach ($matched as $m) {
@@ -91,22 +115,21 @@ class Environment extends StaticAbstract implements EnvironmentInterface
     }
 
     /**
-     * de-referencing env in the value
+     * dereferencing string like '${USER}' into 'realUser'
      *
      * @param  string $value
      * @return string
      * @throws LogicException if error happens
      * @access protected
-     * @static
      */
-    protected static function deReference(/*# string */ $value)/*# : string */
+    protected function deReference(/*# string */ $value)/*# : string */
     {
-        $regex = sprintf('/\${(%s)}/', self::NAME_PATTERN);
+        $regex = sprintf('/\${(%s)}/', $this->name_pattern);
         while (false !== strpos($value, '${')) {
             $value = preg_replace_callback(
                 $regex,
                 function ($matched) {
-                    $env = static::matchEnv($matched[1]);
+                    $env = $this->matchEnv($matched[1]);
                     if (false === $env) {
                         throw new LogicException(
                             Message::get(
@@ -125,14 +148,16 @@ class Environment extends StaticAbstract implements EnvironmentInterface
     }
 
     /**
-     * Find the env value from name, support '_SERVER.HTTP_HOST' etc.
+     * Find the env value base one the name
+     *
+     * - support super globals like '_SERVER.HTTP_HOST' etc.
+     * - use getenv()
      *
      * @param  string $name
      * @return string|false
      * @access protected
-     * @static
      */
-    protected static function matchEnv(/*# string */ $name)
+    protected function matchEnv(/*# string */ $name)
     {
         if ('_' === $name[0]) {
             // PHP super globals like _SERVER, _COOKIE etc.

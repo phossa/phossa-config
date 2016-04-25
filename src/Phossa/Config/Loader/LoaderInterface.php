@@ -32,26 +32,25 @@ interface LoaderInterface
      *
      * @param  string $rootDir
      * @param  string config file type
+     * @param  string|null $environment
      * @return $this
      * @throws InvalidArgumentException
      * @access public
      */
     public function __invoke(
         /*# string */ $rootDir,
-        /*# string */ $fileType = 'php'
+        /*# string */ $fileType = 'php',
+        /*# string */ $environment = null
     );
 
     /**
      * Load group config files base on environment. Load all if $group is null.
      *
      * @param  null|string $group
-     * @param  string $environment
-     * @return null|array
+     * @param  null|string $environment
+     * @return array
      * @throws LogicException if something goes wrong
      * @access public
      */
-    public function load(
-        $group,
-        /*# string */ $environment = null
-    );
+    public function load($group, $environment = null);
 }

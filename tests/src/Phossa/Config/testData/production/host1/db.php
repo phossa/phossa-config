@@ -2,7 +2,7 @@
 
 return [
     'auth' => [
-        'user' => 'www',
-        'pass' => 'password'
+        'user' => 'bingo',
+        'pass' => 'nopass'
     ]
 ];
