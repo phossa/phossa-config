@@ -61,6 +61,9 @@ class Environment implements EnvironmentInterface
     {
         $contents = $this->getContents($path);
 
+        // set some magic environment values
+        $this->setMagicEnv($path);
+
         // parse & set env
         foreach ($this->parse($contents) as $name => $val) {
             // dereference if need to
@@ -91,10 +94,6 @@ class Environment implements EnvironmentInterface
                 Message::CONFIG_FILE_NOTFOUND
             );
         }
-
-        // set some magic environment values
-        $this->setMagicEnv($path);
-
         return $contents;
     }
 
@@ -176,11 +175,8 @@ class Environment implements EnvironmentInterface
                     return $GLOBALS[$pref][$suff];
                 }
             }
-            return false;
-        } else {
-            // normal environment
-            return getenv($name);
         }
+        return getenv($name);
     }
 
     /**

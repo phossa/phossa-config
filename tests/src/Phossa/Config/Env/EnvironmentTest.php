@@ -139,13 +139,16 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('space1 space2', getenv('test3'));
         $this->assertEquals('wowwow', getenv('test4'));
         $this->assertEquals('xxxwow', getenv('test5'));
+        $this->assertEquals('envfile.txt/wow', getenv('test7'));
 
         // delete used envs
         putenv('test1');
         putenv('test2');
         putenv('test3');
         putenv('test4');
-        putenv('test4');
+        putenv('test5');
+        putenv('test6');
+        putenv('test7');
         putenv('bingo');
         unset($_SERVER['test']);
     }

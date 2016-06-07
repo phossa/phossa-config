@@ -15,3 +15,7 @@ test4 = ${${test1}o}wow
 
 # use super globals
 test5=${_SERVER.test}wow
+
+# use magic values
+test6=${__FILE__}
+test7=${test6}/wow
