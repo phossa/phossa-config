@@ -8,8 +8,8 @@ Introduction
 ---
 
 *phossa-config* is a configuration management library for PHP. The design idea
-is inspired by another github project `mrjgreen/config` but with lot of more
-cool features.
+is inspired by another github project `mrjgreen/config` but with lots of cool
+features.
 
 It requires PHP 5.4 and supports PHP 7.0+, HHVM. It is compliant with
 [PSR-1][PSR-1], [PSR-2][PSR-2], [PSR-4][PSR-4].
