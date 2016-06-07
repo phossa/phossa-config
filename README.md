@@ -8,8 +8,8 @@ Introduction
 ---
 
 *phossa-config* is a configuration management library for PHP. The design idea
-is inspired by another github project `mrjgreen/config` but with lots of cool
-features.
+is inspired by another github project `mrjgreen/config` but with lot of more
+cool features.
 
 It requires PHP 5.4 and supports PHP 7.0+, HHVM. It is compliant with
 [PSR-1][PSR-1], [PSR-2][PSR-2], [PSR-4][PSR-4].
@@ -44,11 +44,12 @@ Features
 
 - Support `.php`, `.json`, `.ini` and `.xml` type of configuration files.
 
-- [Reference](#ref) is possible, such as `${system.tmpdir}` in configuration.
+- [Reference](#ref) is possible, such as `${system.tmpdir}` in configuration
+  file and environment file.
 
 - On demand configuration loading (lazy loading).
 
-- Load all configuration files in one shot with `$config->get(null)`
+- Able to load all configuration files in one shot with `$config->get(null)`
 
 - Configuration [cache](#cache).
 
@@ -79,6 +80,9 @@ Features
   ];
   ```
 
+- Un*x shell style environment file '.env' is supported with dereferencing
+  feature and magic environment values like `${__DIR__}` and `${__FILE__}`
+
 Installation
 ---
 
@@ -107,7 +111,23 @@ Usage
   practice is setting environment in a `.env` file in the installation root
   and put all configuration files in the `config/` directory.
 
-  For example, in the `bootstrap.php` file,
+  Sample `.env` file,
+
+  ```php
+  # debugging true|false, change to 'false' ON production server
+  APP_DEBUG=true
+
+  # App environment, change to 'prod' ON production server
+  APP_ENV=dev
+
+  # app root directory, default to current dir
+  APP_ROOT=${__DIR__}
+
+  # central configuration directory
+  CONFIG_DIR=${APP_ROOT}/config
+  ```
+
+  In the `bootstrap.php` file,
 
   ```php
   // load environment
@@ -116,21 +136,11 @@ Usage
   // create config object
   $config = new Phossa\Config\Config(
       getenv('CONFIG_DIR'), // loaded from .env file
-      getenv('APP_ENV'),    // loaded from .env file
+      getenv('APP_ENV')     // loaded from .env file
   );
 
   // load all configs in one shot
   $conf_data = $config->get(null);
-  ```
-
-  Where `.env` is a shell style file like the following,
-
-  ```php
-  # comment: config dir
-  CONF_DIR=/usr/local/conf
-
-  # app running env
-  APP_ENV=production/host1  # current env
   ```
 
 - <a name="group"></a>Grouping
@@ -163,7 +173,7 @@ Usage
   // create config object
   $config = new Phossa\Config\Config(
       dirname(__DIR__) . '/config',     // the config dir
-      'staging/server2',                // staging env
+      'staging/server2',                // config env
       'php',                            // file type
       new Phossa\Config\Cache\Cache(__DIR__ . '/cache') // cache location
   );
@@ -179,18 +189,18 @@ Usage
 
   - Pros of using caching
 
-  	- Speed up. Read from one file instead of lots of configuration files.
+    - Speed up. Read from one file instead of lots of configuration files.
 
-  	- [References](#ref) like `${system.tmpdir}` are done already.
+    - [References](#ref) like `${system.tmpdir}` are done already.
 
   - Cons of using caching
 
-  	- Config data might be stale. need to using `$config->save()` to overwrite
-  	  or `$cache->clear()` to clear the cache.
+    - Config data might be stale. need to using `$config->save()` to overwrite
+      or `$cache->clear()` to clear the cache.
 
-  	- Need write permission to a cache directory.
+    - Need write permission to a cache directory.
 
-  	- Might expose your configuration if you are not careful with cache data.
+    - Might expose your configuration if you are not careful with cache data.
 
 - <a name="ref"></a>Reference
 
@@ -243,10 +253,10 @@ Usage
 
   - `set($key, $value)`
 
-  	Set the configuration manually in this *session*. The value will **NOT**
-  	be reflected in any config files unless you modify config file manually.
+    Set the configuration manually in this *session*. The value will **NOT**
+    be reflected in any config files unless you modify config file manually.
 
-  	`$value` can be a `string` or `array`.
+    `$value` can be a `string` or `array`.
 
   - `has($key)`
 

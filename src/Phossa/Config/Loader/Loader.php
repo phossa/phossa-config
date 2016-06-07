@@ -114,7 +114,7 @@ class Loader implements LoaderInterface
      * Set root directory
      *
      * @param  string $rootDir
-     * @return $this
+     * @return self
      * @throws InvalidArgumentException if dir is bad
      * @access protected
      */
@@ -137,7 +137,7 @@ class Loader implements LoaderInterface
      * Set config file type
      *
      * @param  string $fileType
-     * @return $this
+     * @return self
      * @throws InvalidArgumentException if unsupported file type
      * @access protected
      */
@@ -161,7 +161,7 @@ class Loader implements LoaderInterface
      * Set environment
      *
      * @param  null|string $environment
-     * @return $this
+     * @return self
      * @access protected
      */
     protected function setEnvironment($environment)

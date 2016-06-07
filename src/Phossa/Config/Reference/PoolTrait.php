@@ -55,7 +55,7 @@ trait PoolTrait
      * Set pool dirty
      *
      * @param  bool $dirty
-     * @return $this
+     * @return self
      * @access protected
      */
     protected function setPoolDirty(/*# bool */ $dirty = true)
@@ -66,7 +66,7 @@ trait PoolTrait
     /**
      * clean the pool
      *
-     * @return $this
+     * @return self
      * @access protected
      */
     protected function cleanPool()

@@ -174,7 +174,7 @@ class Config extends Parameter implements CacheAwareInterface
      * Read in config files for $key
      *
      * @param  null|string $key
-     * @return $this
+     * @return self
      * @throws InvalidArgumentException if $key is not a string
      * @access protected
      */

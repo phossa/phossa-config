@@ -42,7 +42,7 @@ interface ConfigInterface
      *
      * @param  null|string $key configuration key
      * @param  string|array values
-     * @return $this
+     * @return self
      * @throws InvalidArgumentException if $key not a string
      * @access public
      */

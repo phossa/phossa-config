@@ -33,7 +33,7 @@ interface LoaderInterface
      * @param  string $rootDir
      * @param  string config file type
      * @param  string|null $environment
-     * @return $this
+     * @return self
      * @throws InvalidArgumentException
      * @access public
      */

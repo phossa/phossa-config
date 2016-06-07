@@ -22,18 +22,22 @@ use Phossa\Config\Exception\NotFoundException;
  * One implementation of EnvironmentInterface
  *
  * - Load ENV from local file system, normally a '.env' file.
+ * - support ${__DIR__} and ${__FILE__} in the '.env' file
  * - Other implmentationmay just need to override `getContents()` method
  *
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
  * @see     EnvironmentInterface
- * @version 1.0.0
+ * @version 1.0.3
  * @since   1.0.0 added
+ * @since   1.0.3 added support for ${__DIR__} and ${__FILE__}
  */
 class Environment implements EnvironmentInterface
 {
     /**
      * ENV variable name pattern
+     *
+     * started with ascii and '_', followed by alphanumeric, '.' and '_'
      *
      * @var    string
      * @access protected
@@ -87,6 +91,9 @@ class Environment implements EnvironmentInterface
                 Message::CONFIG_FILE_NOTFOUND
             );
         }
+
+        // set some magic environment values
+        $this->setMagicEnv($path);
 
         return $contents;
     }
@@ -174,5 +181,19 @@ class Environment implements EnvironmentInterface
             // normal environment
             return getenv($name);
         }
+    }
+
+    /**
+     * Set magic env like __DIR__, __FILE__ for $path
+     *
+     * @param  string $path
+     * @access protected
+     * @since  1.0.3
+     */
+    protected function setMagicEnv(/*# string */ $path)
+    {
+        $real = realpath($path);
+        putenv('__DIR__=' . dirname($real));
+        putenv('__FILE__=' . basename($real));
     }
 }

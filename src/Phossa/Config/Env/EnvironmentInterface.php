@@ -31,9 +31,9 @@ interface EnvironmentInterface
      * Load env from a path (local file, other storage etc.)
      *
      * @param  string $path
-     * @return $this
+     * @return self
      * @throws LogicException if parse error
-     * @throws NotFoundException if $path not found
+     * @throws NotFoundException if path not found
      * @access public
      */
     public function load(/*# string */ $path);

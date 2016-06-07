@@ -29,7 +29,7 @@ interface CacheInterface
     /**
      * Configure path etc.
      *
-     * @return $this
+     * @return self
      * @access public
      */
     public function __invoke();
@@ -38,7 +38,7 @@ interface CacheInterface
      * Save data to a cache
      *
      * @param  array $data
-     * @return $this
+     * @return self
      * @access public
      */
     public function save(array $data);
@@ -54,7 +54,7 @@ interface CacheInterface
     /**
      * Clear all cache
      *
-     * @return $this
+     * @return self
      * @access public
      */
     public function clear();

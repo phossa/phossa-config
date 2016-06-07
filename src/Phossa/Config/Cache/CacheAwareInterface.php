@@ -21,7 +21,7 @@ interface CacheAwareInterface
      * Set the cache
      *
      * @param  CacheInterface $cache
-     * @return $this
+     * @return self
      * @access public
      */
     public function setCache(CacheInterface $cache);
@@ -29,7 +29,7 @@ interface CacheAwareInterface
     /**
      * Write current data to cache
      *
-     * @return $this
+     * @return self
      * @throws LogicException cache object not set
      * @access public
      */
