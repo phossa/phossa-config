@@ -38,8 +38,9 @@ use Phossa\Config\Exception\InvalidArgumentException;
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
  * @see     Parameter
- * @version 1.0.0
+ * @version 1.0.6
  * @since   1.0.0 added
+ * @since   1.0.6 changed constructor parameters
  */
 class Config extends Parameter implements CacheAwareInterface
 {
@@ -88,8 +89,6 @@ class Config extends Parameter implements CacheAwareInterface
      * @param  string $fileType config file type 'php|ini|xml|json'
      * @param  CacheInterface $cache cache pool object if any
      * @param  LoaderInterface $loader
-     * @param  string $referencePattern change reference pattern if want to
-     *
      * @throws InvalidArgumentException if dir is bad or unsupported file type
      * @access public
      */
@@ -98,8 +97,7 @@ class Config extends Parameter implements CacheAwareInterface
         /*# string */ $environment = null,
         /*# string */ $fileType = 'php',
         CacheInterface $cache   = null,
-        LoaderInterface $loader = null,
-        /*# string */ $referencePattern = null
+        LoaderInterface $loader = null
     ) {
         // root directory
         $this->directory = $configDirectory;
@@ -108,13 +106,13 @@ class Config extends Parameter implements CacheAwareInterface
         if (null !== $cache) {
             $this->setCache($cache($configDirectory, $fileType, $environment));
             if (is_array($conf = $cache->get())) {
-                parent::__construct($conf, $referencePattern);
+                parent::__construct($conf);
                 $this->all_loaded = true;
             }
 
         // init with empty data
         } else {
-            parent::__construct([], $referencePattern);
+            parent::__construct();
         }
 
         // set loader

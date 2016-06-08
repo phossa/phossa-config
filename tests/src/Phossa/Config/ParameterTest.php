@@ -57,11 +57,13 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Reset reference start & end delimiter
+     *
      * @covers Phossa\Config\Reference\Parameter::setReferencePattern()
      */
-    public function testSetReferencePattern()
+    public function testSetReferencePattern1()
     {
-        $this->object->setReferencePattern('~(%([a-zA-Z_][a-zA-Z0-9._]*+)%)~');
+        $this->object->setReferencePattern('%', '%');
 
         // test data to use
         $data = [
@@ -78,15 +80,38 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Phossa\Config\Reference\Parameter::hasReference()
+     * Disable reference
+     *
+     * @covers Phossa\Config\Reference\Parameter::setReferencePattern()
      */
-    public function testHasReference()
+    public function testSetReferencePattern2()
     {
-        $method = $this->getMethod('hasReference');
+        $this->object->setReferencePattern('', '');
+
+        // test data to use
+        $data = [
+            'test1' => '%wow1%',
+            'test2' => [
+                'test3' => '%wow3%'
+            ],
+            'wow1'  => '%test2.test3%',
+            'wow3'  => 'xxx'
+        ];
+        $this->object->set(null, $data);
+
+        $this->assertEquals('%wow1%', $this->object->get('test1'));
+    }
+
+    /**
+     * @covers Phossa\Config\Reference\Parameter::extractReference()
+     */
+    public function testExtractReference()
+    {
+        $method = $this->getMethod('extractReference');
 
         // no ref
         $str1 = 'dd';
-        $this->assertFalse($method->invokeArgs($this->object, [ $str1 ]));
+        $this->assertTrue([] == $method->invokeArgs($this->object, [ $str1 ]));
 
         // has ref
         $str2 = '${test}dd';
@@ -115,41 +140,39 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
      */
     public function testDeReference1()
     {
-        $method = $this->getMethod('deReference');
-
         // no ref
         $str1 = 'dd';
         $this->assertEquals(
             $str1,
-            $method->invokeArgs($this->object, [ $str1 ])
+            $this->object->deReference($str1)
         );
 
         // has ref
         $str2 = '${test1}dd';
         $this->assertEquals(
             'wow3dd',
-            $method->invokeArgs($this->object, [ $str2 ])
+            $this->object->deReference($str2)
         );
 
         // multiple refs, leveled refs
         $str3 = '${test1}dd${test2.test3}';
         $this->assertEquals(
             'wow3ddwow3',
-            $method->invokeArgs($this->object, [ $str3 ])
+            $this->object->deReference($str3)
         );
 
         // recursive refs
         $str4 = '${${test1}}dd';
         $this->assertEquals(
             'xxxdd',
-            $method->invokeArgs($this->object, [ $str4 ])
+            $this->object->deReference($str4)
         );
 
         // reference to array
         $str5 = '${test2}';
         $this->assertEquals(
             ['test3' => 'wow3'],
-            $method->invokeArgs($this->object, [ $str5 ])
+            $this->object->deReference($str5)
         );
     }
 
@@ -160,13 +183,11 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
      */
     public function testDeReference2()
     {
-        $method = $this->getMethod('deReference');
-
         // unknown ref, keep it untouched
         $str1 = '${yyy}dd';
         $this->assertEquals(
             $str1,
-            $method->invokeArgs($this->object, [ $str1 ])
+            $this->object->deReference($str1)
         );
     }
 
@@ -180,11 +201,9 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
      */
     public function testDeReference3()
     {
-        $method = $this->getMethod('deReference');
-
         // dereferenced array into a string
         $str1 = '${test2}dd';
-        $method->invokeArgs($this->object, [ $str1 ]);
+        $this->object->deReference($str1);
     }
 
     /**
@@ -204,11 +223,9 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object->set(null, $data);
 
-        $method = $this->getMethod('deReference');
-
         // loop found
         $str = '${testX}';
-        $method->invokeArgs($this->object, [ $str ]);
+        $this->object->deReference($str);
     }
 
     /**

@@ -22,11 +22,29 @@ use Phossa\Config\Exception\LogicException;
  *
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
- * @version 1.0.0
+ * @version 1.0.6
+ * @see     ReferenceInterface
  * @since   1.0.0 added
+ * @since   1.0.6 added setReferencePattern() etc.
  */
 trait ReferenceTrait
 {
+    /**
+     * start of the reference
+     *
+     * @var    string
+     * @access protected
+     */
+    protected $reference_start = '${';
+
+    /**
+     * end of the reference
+     *
+     * @var    string
+     * @access protected
+     */
+    protected $reference_end = '}';
+
     /**
      * pattern to match a reference '${name}'
      *
@@ -35,7 +53,7 @@ trait ReferenceTrait
      * @var    string
      * @access protected
      */
-    protected $reference_pattern = '~(\${([a-zA-Z_][a-zA-Z0-9._]*+)})~';
+    protected $reference_pattern;
 
     /**
      * for loop detection
@@ -46,55 +64,41 @@ trait ReferenceTrait
     protected $loop_detect = [];
 
     /**
-     * Verify $str has reference��('${name}xxXX') in it.
-     *
-     * Returns ['${name}' => 'name'] if found, or FALSE if not found
-     *
-     * @param  string $str
-     * @return false|array
-     * @access protected
+     * {@inheritDoc}
      */
-    protected function hasReference(/*# string */ $str)
-    {
-        // disable reference feature by setting pattern to ''
-        if ('' === $this->reference_pattern) {
-            return false;
-        }
-
-        if (preg_match_all(
-            $this->reference_pattern,
-            $str,
-            $matched,
-            \PREG_SET_ORDER
-        )) {
-            $res = [];
-            foreach ($matched as $m) {
-                $res[$m[1]] = $m[2];
-            }
-            return $res;
-        }
-        return false;
+    public function setReferencePattern(
+        /*# : string */ $patternStart,
+        $patternEnd
+    ) {
+        $this->reference_start = $patternStart;
+        $this->reference_end = $patternEnd;
+        $this->reference_pattern = null;
+        return $this;
     }
 
     /**
-     * Replace all references in the string like '${system.dir}/temp'
-     *
-     * - recursively dereference a result string
-     *
-     * - if result is array|object do NOT dereference recursively.
-     *
-     * @param  string $str
-     * @return string|object|array
-     * @throws LogicException if malformed reference found
-     * @access protected
+     * {@inheritDoc}
      */
-    protected function deReference(/*# string */ $str)
+    public function hasReference(/*# : string */ $string)/*# : bool */
     {
-        // disable reference feature by setting pattern to ''
-        if ('' === $this->reference_pattern) {
-            return $str;
+        // non string found
+        if (!is_string($string)) {
+            return false;
         }
 
+        // disable reference feature by setting pattern start to ''
+        if ('' === $this->getReferencePattern()) {
+            return false;
+        }
+
+        return false !== strpos($string, $this->reference_start);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deReference(/*# string */ $str)
+    {
         // for loop detection in recursive dereference
         $level = 0;
 
@@ -102,7 +106,13 @@ trait ReferenceTrait
         $unresolved = [];
 
         // find reference in the string RECURSIVELY
-        while(false !== ($res = $this->hasReference($str))) {
+        while($this->hasReference($str)) {
+            // extract references
+            $res = $this->extractReference($str);
+            if (empty($res)) {
+                break;
+            }
+
             // loop found
             if ($level++ > 10) {
                 throw new LogicException(
@@ -154,6 +164,54 @@ trait ReferenceTrait
     }
 
     /**
+     * Get the reference pattern
+     *
+     * @return string
+     * @access protected
+     */
+    protected function getReferencePattern()/*# : string */
+    {
+        if (is_null($this->reference_pattern)) {
+            if ('' === $this->reference_start ||
+                is_null($this->reference_end)) {
+                $this->reference_pattern = '';
+            } else {
+                $this->reference_pattern = '~('  .
+                    preg_quote($this->reference_start) .
+                    '([a-zA-Z_][a-zA-Z0-9._]*+)' .
+                    preg_quote($this->reference_end) . ')~';
+            }
+        }
+        return $this->reference_pattern;
+    }
+
+    /**
+     * Extract reference from $str, such as '${name}xxXX'.
+     *
+     * Returns ['${name}' => 'name'] if found, or empty array if not found
+     *
+     * @param  string $str
+     * @return array
+     * @access protected
+     */
+    protected function extractReference(/*# string */ $str)/*# : array */
+    {
+        $res = [];
+        if (preg_match_all(
+            $this->getReferencePattern(),
+            $str,
+            $matched,
+            \PREG_SET_ORDER
+        )) {
+            foreach ($matched as $m) {
+                $res[$m[1]] = $m[2];
+            }
+            return $res;
+        }
+        return $res;
+    }
+
+    /**
      * Derefence all references in an array
      *
      * @param  array &$dataArray
@@ -165,8 +223,8 @@ trait ReferenceTrait
         array &$dataArray,
         /*# bool */ $clearCache = false
     ) {
-        // disable reference feature by setting pattern to ''
-        if ('' === $this->reference_pattern) {
+        // reference feature disabled
+        if ('' === $this->getReferencePattern()) {
             return;
         }
 

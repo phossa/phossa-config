@@ -28,28 +28,21 @@ use Phossa\Config\Exception\InvalidArgumentException;
  * @author  Hong Zhang <phossa@126.com>
  * @see     ReferenceAbstract
  * @see     ConfigInterface
- * @version 1.0.0
+ * @version 1.0.6
  * @since   1.0.0 added
+ * @since   1.0.6 changed constructor parameters
  */
 class Parameter extends ReferenceAbstract implements ConfigInterface
 {
     use PoolTrait;
 
     /**
-     * Set the whole parameter pool, change reference pattern if want
-     *
-     * Set $referencePattern to '' to disable reference feature !
+     * Set the whole parameter pool
      *
      * @param  array $parameters
-     * @param  string $referencePattern
      * @access public
      */
-    public function __construct(
-        array $parameters = [],
-        /*# string */ $referencePattern = null
-    ) {
-        // change reference pattern if you want
-        parent::__construct($referencePattern);
+    public function __construct(array $parameters = []) {
 
         // set parameter pool, NOTHING is dereferenced here
         $this->set(null, $parameters);

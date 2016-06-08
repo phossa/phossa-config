@@ -232,6 +232,21 @@ Usage
       ...
   ];
   ```
+
+  You may reset the reference start and ending chars,
+
+  ```php
+  // now reference is something like '%system.tmpdir%'
+  $config = (new Config())->setReferencePattern('%', '%');
+  ```
+
+  Or even disable the reference feature,
+
+  ```php
+  // now reference is not recognised
+  $config = (new Config())->setReferencePattern('', '');
+  ```
+
 - <a name="overwrite"></a>Overwriting
 
   If the environment is set to `production/host1`, the precedence order is,
@@ -265,6 +280,11 @@ Usage
   - `save()`
 
     Save current full configurations into a cache.
+
+Changes
+---
+
+- 1.0.6 added `setReferencePattern()`, `hasReference()` and `deReference()`
 
 Dependencies
 ---
