@@ -46,7 +46,7 @@ trait ReferenceTrait
     protected $loop_detect = [];
 
     /**
-     * Verify $str has reference¡¡('${name}xxXX') in it.
+     * Verify $str has referenceï¿½ï¿½('${name}xxXX') in it.
      *
      * Returns ['${name}' => 'name'] if found, or FALSE if not found
      *
@@ -213,7 +213,7 @@ trait ReferenceTrait
     }
 
     /**
-     * Get raw value (not dereferenced£© by name
+     * Get raw value (not dereferenced) by name
      *
      * @param  string $name
      * @return null|string|array|object

@@ -15,13 +15,13 @@
 namespace Phossa\Config;
 
 use Phossa\Config\Loader\Loader;
+use Phossa\Config\Message\Message;
 use Phossa\Config\Cache\CacheInterface;
 use Phossa\Config\Cache\CacheAwareTrait;
 use Phossa\Config\Loader\LoaderInterface;
+use Phossa\Config\Exception\LogicException;
 use Phossa\Config\Cache\CacheAwareInterface;
 use Phossa\Config\Exception\InvalidArgumentException;
-use Phossa\Config\Exception\LogicException;
-use Phossa\Config\Message\Message;
 
 /**
  * Config class with support for environment, reference, cache
