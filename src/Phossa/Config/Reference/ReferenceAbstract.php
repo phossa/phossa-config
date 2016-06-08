@@ -20,10 +20,11 @@ namespace Phossa\Config\Reference;
  * @abstract
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
- * @version 1.0.0
+ * @version 1.0.5
  * @since   1.0.0 added
+ * @since   1.0.5 added setReferencePattern()
  */
-abstract class ReferenceAbstract
+abstract class ReferenceAbstract implements ReferenceInterface
 {
     use TreeTrait, ReferenceTrait;
 
@@ -37,7 +38,16 @@ abstract class ReferenceAbstract
         /*# string */ $referencePattern = null
     ) {
         if (!is_null($referencePattern)) {
-            $this->reference_pattern = $referencePattern;
+            $this->setReferencePattern($referencePattern);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setReferencePattern(/*# : string */ $pattern)
+    {
+        $this->reference_pattern = $pattern;
+        return $this;
     }
 }

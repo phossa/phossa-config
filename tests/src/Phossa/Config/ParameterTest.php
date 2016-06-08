@@ -57,6 +57,27 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Phossa\Config\Reference\Parameter::setReferencePattern()
+     */
+    public function testSetReferencePattern()
+    {
+        $this->object->setReferencePattern('~(%([a-zA-Z_][a-zA-Z0-9._]*+)%)~');
+
+        // test data to use
+        $data = [
+            'test1' => '%wow1%',
+            'test2' => [
+                'test3' => '%wow3%'
+            ],
+            'wow1'  => '%test2.test3%',
+            'wow3'  => 'xxx'
+        ];
+        $this->object->set(null, $data);
+
+        $this->assertEquals('xxx', $this->object->get('test1'));
+    }
+
+    /**
      * @covers Phossa\Config\Reference\Parameter::hasReference()
      */
     public function testHasReference()
