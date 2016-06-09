@@ -21,6 +21,7 @@ namespace Phossa\Config\Reference;
  * @author  Hong Zhang <phossa@126.com>
  * @version 1.0.6
  * @since   1.0.5 added
+ * @since   1.0.6 added getReferencePattern()
  */
 interface ReferenceInterface
 {
@@ -38,6 +39,14 @@ interface ReferenceInterface
         /*# : string */ $patternStart,
         $patternEnd
     );
+
+    /**
+     * Get reference pattern start and ending string in pair
+     *
+     * @return array
+     * @access public
+     */
+    public function getReferencePattern()/*# : array */;
 
     /**
      * Quick check $string contains reference pattern or not

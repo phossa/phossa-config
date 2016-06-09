@@ -26,6 +26,7 @@ use Phossa\Config\Exception\LogicException;
  * @see     ReferenceInterface
  * @since   1.0.0 added
  * @since   1.0.6 added setReferencePattern() etc.
+ * @since   1.0.7 added getReferencePattern()
  */
 trait ReferenceTrait
 {
@@ -79,6 +80,14 @@ trait ReferenceTrait
     /**
      * {@inheritDoc}
      */
+    public function getReferencePattern()/*# : array */
+    {
+        return [$this->reference_start, $this->reference_end];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function hasReference(/*# : string */ $string)/*# : bool */
     {
         // non string found
@@ -87,7 +96,7 @@ trait ReferenceTrait
         }
 
         // disable reference feature by setting pattern start to ''
-        if ('' === $this->getReferencePattern()) {
+        if ('' === $this->getPattern()) {
             return false;
         }
 
@@ -169,7 +178,7 @@ trait ReferenceTrait
      * @return string
      * @access protected
      */
-    protected function getReferencePattern()/*# : string */
+    protected function getPattern()/*# : string */
     {
         if (is_null($this->reference_pattern)) {
             if ('' === $this->reference_start ||
@@ -198,7 +207,7 @@ trait ReferenceTrait
     {
         $res = [];
         if (preg_match_all(
-            $this->getReferencePattern(),
+            $this->getPattern(),
             $str,
             $matched,
             \PREG_SET_ORDER
@@ -224,7 +233,7 @@ trait ReferenceTrait
         /*# bool */ $clearCache = false
     ) {
         // reference feature disabled
-        if ('' === $this->getReferencePattern()) {
+        if ('' === $this->getPattern()) {
             return;
         }
 
