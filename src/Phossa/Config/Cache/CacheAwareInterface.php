@@ -15,6 +15,15 @@
 namespace Phossa\Config\Cache;
 
 use Phossa\Config\Exception\LogicException;
+
+/**
+ * CacheAwareInterface
+ *
+ * @package Phossa\Config
+ * @author  Hong Zhang <phossa@126.com>
+ * @version 1.0.0
+ * @since   1.0.0 added
+ */
 interface CacheAwareInterface
 {
     /**

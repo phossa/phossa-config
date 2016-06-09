@@ -18,7 +18,7 @@ use Phossa\Config\Message\Message;
 use Phossa\Config\Exception\InvalidArgumentException;
 
 /**
- * One implementation of CacheInterface
+ * One local filesystem implementation of CacheInterface
  *
  * Store config data into one local cache file
  *
