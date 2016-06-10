@@ -73,7 +73,7 @@ class Parameter extends ReferenceAbstract implements ConfigInterface
     /**
      * {@inheritDoc}
      */
-    public function set($key, $value)
+    public function set($key, $value = null)
     {
         // set the whole pool
         if (null === $key) {
@@ -85,6 +85,12 @@ class Parameter extends ReferenceAbstract implements ConfigInterface
                 );
             }
             $this->pool = $this->fixValue($value);
+
+        // set with array directly
+        } elseif (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->set($k, $v);
+            }
 
         // set a key/value pair
         } else {

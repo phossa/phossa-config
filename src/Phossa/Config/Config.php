@@ -141,8 +141,7 @@ class Config extends Parameter implements CacheAwareInterface
      */
     public function set($key, $value)
     {
-        // null is special
-        if (null !== $key) {
+        if (is_string($key)) {
             $this->loadConfig($key);
         }
 

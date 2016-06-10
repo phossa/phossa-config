@@ -40,13 +40,13 @@ interface ConfigInterface
     /**
      * Set configuration, if $key is null, set ALL configs
      *
-     * @param  null|string $key configuration key
-     * @param  string|array values
+     * @param  null|string|array $key configuration key or configs
+     * @param  string|array|null values
      * @return self
-     * @throws InvalidArgumentException if $key not a string
+     * @throws InvalidArgumentException if $key not a string or array
      * @access public
      */
-    public function set($key, $value);
+    public function set($key, $value = null);
 
     /**
      * Has a configure by key ?
