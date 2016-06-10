@@ -139,7 +139,7 @@ class Config extends Parameter implements CacheAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function set($key, $value)
+    public function set($key, $value = null)
     {
         if (is_string($key)) {
             $this->loadConfig($key);
