@@ -27,12 +27,13 @@ use Phossa\Config\Exception\InvalidArgumentException;
  * @package Phossa\Config
  * @author  Hong Zhang <phossa@126.com>
  * @see     ReferenceAbstract
- * @see     ConfigInterface
- * @version 1.0.6
+ * @see     ParameterInterface
+ * @version 1.0.7
  * @since   1.0.0 added
  * @since   1.0.6 changed constructor parameters
+ * @since   1.0.7 implementing ParameterInterface
  */
-class Parameter extends ReferenceAbstract implements ConfigInterface
+class Parameter extends ReferenceAbstract implements ParameterInterface
 {
     use PoolTrait;
 
