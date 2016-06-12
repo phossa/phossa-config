@@ -15,11 +15,9 @@
 namespace Phossa\Config;
 
 use Phossa\Config\Loader\Loader;
-use Phossa\Config\Message\Message;
 use Phossa\Config\Cache\CacheInterface;
 use Phossa\Config\Cache\CacheAwareTrait;
 use Phossa\Config\Loader\LoaderInterface;
-use Phossa\Config\Exception\LogicException;
 use Phossa\Config\Cache\CacheAwareInterface;
 use Phossa\Config\Exception\InvalidArgumentException;
 
@@ -156,14 +154,10 @@ class Config extends Parameter implements CacheAwareInterface
      */
     public function save()
     {
-        if (null === $this->cache) {
-            throw new LogicException(
-                Message::get(Message::CACHE_NOT_READY),
-                Message::CACHE_NOT_READY
-            );
+        if (null !== $this->cache) {
+            $this->loadConfig(null);
+            $this->cache->save($this->pool);
         }
-        $this->loadConfig(null);
-        $this->cache->save($this->pool);
         return $this;
     }
 

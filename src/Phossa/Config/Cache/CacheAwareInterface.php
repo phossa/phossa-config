@@ -14,8 +14,6 @@
 
 namespace Phossa\Config\Cache;
 
-use Phossa\Config\Exception\LogicException;
-
 /**
  * CacheAwareInterface
  *
@@ -39,7 +37,6 @@ interface CacheAwareInterface
      * Write current data to cache
      *
      * @return self
-     * @throws LogicException cache object not set
      * @access public
      */
     public function save();
