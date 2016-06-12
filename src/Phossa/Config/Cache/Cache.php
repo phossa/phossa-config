@@ -15,7 +15,6 @@
 namespace Phossa\Config\Cache;
 
 use Phossa\Config\Message\Message;
-use Phossa\Config\Exception\InvalidArgumentException;
 
 /**
  * One local filesystem implementation of CacheInterface
@@ -57,22 +56,21 @@ class Cache implements CacheInterface
     /**
      * Set cache directory
      *
-     * @throws InvalidArgumentException
      * @access public
      */
     public function __construct(/*# string */ $dir)
     {
         if (!is_dir($dir)) {
-            throw new InvalidArgumentException(
+            trigger_error(
                 Message::get(Message::CACHE_DIR_INVALID, $dir),
-                Message::CACHE_DIR_INVALID
+                \E_WARNING
             );
         }
 
         if (!is_writable($dir)) {
-            throw new InvalidArgumentException(
+            trigger_error(
                 Message::get(Message::CACHE_DIR_NONWRITABLE, $dir),
-                Message::CACHE_DIR_NONWRITABLE
+                \E_WARNING
             );
         }
 
