@@ -1,8 +1,9 @@
-# phossa-config
+# phossa-config [ABANDONED]
 [![Build Status](https://travis-ci.org/phossa/phossa-config.svg?branch=master)](https://travis-ci.org/phossa/phossa-config)
-[![HHVM](https://img.shields.io/hhvm/phossa/phossa-config.svg?style=flat)](http://hhvm.h4cc.de/package/phossa/phossa-config)
 [![Latest Stable Version](https://img.shields.io/packagist/vpre/phossa/phossa-config.svg?style=flat)](https://packagist.org/packages/phossa/phossa-config)
 [![License](https://poser.pugx.org/phossa/phossa-config/license)](http://mit-license.org/)
+
+**See new lib at [phoole/config](https://github.com/phoole/config)**
 
 Introduction
 ---
